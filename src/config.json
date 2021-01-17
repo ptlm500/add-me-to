@@ -1,0 +1,16 @@
+{
+  "denyList": {
+    "553878853571837970": ["800049601268809748"]
+  },
+  "reacts": {
+    "done": "✅",
+    "userHasRole": "🤷",
+    "error": "🤦",
+    "notAllowed": "👮"
+  },
+  "events": {
+    "message": "message",
+    "ready": "ready",
+    "error": "error"
+  }
+}
