@@ -44,12 +44,20 @@ client.on(events.ready, () => {
 });
 
 client.on("guildCreate", async (guild) => {
-  logger.notice(`👋 Added to server ${guild.name}:${guild.id}`);
+  logger.notice(`👋 Added to server ${guild.name}:${guild.id}`, {
+    meta: {
+      serverId: guild.id,
+    }
+  });
   await Server.create({
     discordId: guild.id,
     name: guild.name
   }).save();
-  logger.notice(`💾 Server records created ${guild.name}:${guild.id}`);
+  logger.notice(`💾 Server records created ${guild.name}:${guild.id}`, {
+    meta: {
+      serverId: guild.id,
+    }
+  });
 });
 
 // Update name on guild update

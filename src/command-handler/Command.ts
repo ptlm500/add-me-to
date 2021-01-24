@@ -27,7 +27,9 @@ export default class Command implements ICommand {
 
   onError(error: BaseError, userMessage: Message): any {
     logger.warning(error.message, {
-      serverId: userMessage.guild?.id,
+      meta: {
+        serverId: userMessage.guild?.id,
+      },
       name: error.name,
       userMessage
     });
