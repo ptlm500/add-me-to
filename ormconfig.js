@@ -1,4 +1,3 @@
-const { PROD } = require("./dist/constants");
 const { Role, Server } = require("./dist/entities");
 
 module.exports = {
@@ -11,5 +10,5 @@ module.exports = {
   password: process.env.DB_PASSWORD,
   entities: [ Role, Server ],
   synchronize: true,
-  logging: !PROD
+  logging: true
 };

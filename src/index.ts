@@ -11,14 +11,20 @@ import { Server } from "./entities";
 import commands, { addRoles } from './commands';
 import CommandHandler from "./command-handler/CommandHandler";
 import logger from './logger/logger';
+import TypeOrmLogger from './logger/TypeOrmLogger';
 
+
+const typeOrmLogger = new TypeOrmLogger();
 const client = new Discord.Client();
 const commandHandler = new CommandHandler(commands, addRoles);
 
 const main = async () => {
   logger.notice('⌛ Initializing ORM');
   const connectionOptions = await getConnectionOptions();
-  await createConnection(connectionOptions);
+  await createConnection({
+    ...connectionOptions,
+    logger: typeOrmLogger
+  });
   logger.notice('✅ ORM initialised');
 
   logger.notice('⌛ Connecting Discord client');
