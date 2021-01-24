@@ -56,7 +56,7 @@ export default class Command implements ICommand {
 
         success && this.onSuccess(userMessage);
       } else {
-        throw new UserPermissionsError(`${member?.displayName}:${member?.id} doesn't have permissions to add roles.`);
+        throw new UserPermissionsError(`🔒 ${member?.displayName}:${member?.id} doesn't have permissions to add roles.`);
       }
     } catch (e) {
       this.onError(e, userMessage);

@@ -24,7 +24,7 @@ export default class TypeOrmLogger implements Logger {
   }
 
   logQuerySlow(time: number, query: string, parameters?: any[], _queryRunner?: QueryRunner): any {
-    logger.warning('Slow query', { time, query, parameters });
+    logger.warning('⏱ Slow query', { time, query, parameters });
   }
 
   logSchemaBuild(message: string, _queryRunner?: QueryRunner): any {

@@ -31,7 +31,7 @@ export default class AddRoles extends Command {
 async function tryAddingRole(member: GuildMember, requestedRole: DiscordRole, denyList: Role[]) {
   if (canAddRole(denyList, requestedRole)) {
     return addRoleToMember(member, requestedRole).catch(e => {
-      logger.warning('Couldn\'t add requested role', {
+      logger.warning('⚠ Couldn\'t add requested role', {
         meta: {
           serverId: member.guild.id,
         },
@@ -41,7 +41,7 @@ async function tryAddingRole(member: GuildMember, requestedRole: DiscordRole, de
       throw new DiscordApiError(e);
     });
   } else {
-    throw new DenyedRoleError(`Role ${requestedRole.name}:${requestedRole.id} is on the deny list`);
+    throw new DenyedRoleError(`🔒 Role ${requestedRole.name}:${requestedRole.id} is on the deny list`);
   }
 }
 
