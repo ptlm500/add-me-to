@@ -4,6 +4,7 @@ import UserPermissionsError from "../errors/UserPermissionsError";
 import {
   reacts
 } from "../config.json";
+import logger from "../logger/logger";
 
 interface ICommand {
   readonly name: string;
@@ -25,11 +26,15 @@ export default class Command implements ICommand {
   };
 
   onError(error: BaseError, userMessage: Message): any {
+    logger.warning(error.message, {
+      serverId: userMessage.guild?.id,
+      name: error.name,
+      userMessage
+    });
     userMessage.react(error.emoji);
   };
 
   userHasRequiredRole(user: GuildMember | null) {
-    // Throw permission error in here?
     if (this.roleIds?.length) {
       return this.roleIds.find(
         roleId => user?.roles.cache.find(
