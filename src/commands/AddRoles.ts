@@ -32,7 +32,9 @@ async function tryAddingRole(member: GuildMember, requestedRole: DiscordRole, de
   if (canAddRole(denyList, requestedRole)) {
     return addRoleToMember(member, requestedRole).catch(e => {
       logger.warning('Couldn\'t add requested role', {
-        serverId: member.guild.id,
+        meta: {
+          serverId: member.guild.id,
+        },
         requestedRole,
         user: member
       });
@@ -45,7 +47,9 @@ async function tryAddingRole(member: GuildMember, requestedRole: DiscordRole, de
 
 function addRoleToMember(member: GuildMember, role: DiscordRole) {
   logger.info(`✏ Adding role ${role.name} to ${member.displayName}`, {
-    serverId: member.guild.id,
+    meta: {
+      serverId: member.guild.id,
+    },
     role,
     user: member
   });
