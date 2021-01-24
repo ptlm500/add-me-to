@@ -10,6 +10,7 @@ import logger from "../logger/logger";
 
 export default class AddRoles extends Command {
   readonly name = "add me to";
+  readonly aliases = ["to", "add"];
 
   async onRun(userMessage: Message) {
     const serverRepository = getCustomRepository(ServerRepository);

@@ -4,10 +4,5 @@
     "userHasRole": "🤷",
     "error": "🤦",
     "notAllowed": "👮"
-  },
-  "events": {
-    "message": "message",
-    "ready": "ready",
-    "error": "error"
   }
 }

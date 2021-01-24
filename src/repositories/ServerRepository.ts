@@ -40,4 +40,30 @@ export default class ServerRepository extends AbstractRepository<Server> {
 
     return null;
   }
+
+  async delete(serverId: string) {
+    return await this.repository.delete({ discordId: serverId });
+  }
+
+  async deleteRole(serverId: string, role: DiscordRole) {
+    const server = await this.repository.findOne({ discordId: serverId });
+
+    if (server) {
+      return Role.delete({ discordId: `${role.id}`, serverId: server.id });
+    }
+
+    return null;
+  }
+
+  async updateServerName(serverId: string, serverName: string) {
+    const server = await this.repository.findOne({ discordId: serverId });
+
+    if (server) {
+      return this.repository.save({
+        ...server,
+        name: serverName
+      });
+    }
+    return null;
+  }
 }
