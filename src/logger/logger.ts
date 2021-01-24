@@ -1,4 +1,5 @@
-import winston, { format, transports } from 'winston';
+import winston, { format } from 'winston';
+import DiscordTransport from 'winston-discord-transport';
 import { PROD } from '../constants';
 
 function getLoggingLevel() {
@@ -6,6 +7,33 @@ function getLoggingLevel() {
     return 'info';
   }
   return 'debug';
+}
+
+const defaultMeta = { service: 'add-me-to' };
+
+const transports : winston.transport[] = [
+  new winston.transports.Console({
+    format: format.combine(
+      format.colorize(),
+      format.simple()
+    )
+  })
+];
+
+if (process.env.DISCORD_ERROR_WEBHOOK) {
+  transports.push(new DiscordTransport({
+    webhook: process.env.DISCORD_ERROR_WEBHOOK,
+    defaultMeta,
+    level: 'error'
+  }));
+}
+
+if (process.env.DISCORD_NOITCE_WEBHOOK) {
+  transports.push(new DiscordTransport({
+    webhook: process.env.DISCORD_NOITCE_WEBHOOK,
+    defaultMeta,
+    level: 'notice'
+  }));
 }
 
 const logger = winston.createLogger({
@@ -20,14 +48,7 @@ const logger = winston.createLogger({
     format.json()
   ),
   defaultMeta: { service: 'add-me-to' },
-  transports: [
-    new transports.Console({
-      format: format.combine(
-        format.colorize(),
-        format.simple()
-      )
-    })
-  ]
-})
+  transports
+});
 
 export default logger;
