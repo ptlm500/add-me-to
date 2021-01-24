@@ -1,18 +1,18 @@
 require('dotenv').config();
-import { Message } from "discord.js";
-// import ormconfig from "./ormconfig";
+import { Guild, Message, Role } from "discord.js";
 import {
   createConnection,
-  getConnectionOptions
+  getConnectionOptions,
+  getCustomRepository
 } from "typeorm";
 import Discord from "discord.js";
-import { events } from "./config.json";
 import { Server } from "./entities";
 import commands, { addRoles } from './commands';
 import CommandHandler from "./command-handler/CommandHandler";
 import logger from './logger/logger';
 import TypeOrmLogger from './logger/TypeOrmLogger';
 
+import ServerRepository from "./repositories/ServerRepository";
 
 const typeOrmLogger = new TypeOrmLogger();
 const client = new Discord.Client();
@@ -35,12 +35,14 @@ main().catch(err => {
   logger.error(err);
 });
 
-client.on(events.ready, () => {
+client.on("ready", () => {
   if (client.user) {
     logger.notice(`🚀 Logged in as ${client.user.tag}`);
   } else {
     logger.warning('🚀 Logged in as unknown user', { client });
   }
+  logger.notice(`🌍 Online and serving ${client.guilds.cache.size} servers`);
+  client.user?.setActivity('@add me to @role');
 });
 
 client.on("guildCreate", async (guild) => {
@@ -49,20 +51,71 @@ client.on("guildCreate", async (guild) => {
       serverId: guild.id,
     }
   });
-  await Server.create({
+  Server.create({
     discordId: guild.id,
     name: guild.name
-  }).save();
-  logger.notice(`💾 Server records created ${guild.name}:${guild.id}`, {
+  }).save().then(() => {
+    logger.notice(`💾 Server records created ${guild.name}:${guild.id}`, {
+      meta: {
+        serverId: guild.id,
+      }
+    });
+  })
+});
+
+client.on("guildDelete", async (guild) => {
+  logger.notice(`😥 Removed from server ${guild.name}:${guild.id}`, {
     meta: {
       serverId: guild.id,
     }
   });
+  const serverRepository = getCustomRepository(ServerRepository);
+  serverRepository.delete(guild.id).then(() => {
+    logger.notice(`🗑 Server records removed ${guild.name}:${guild.id}`, {
+      meta: {
+        serverId: guild.id,
+      }
+    });
+  });
 });
 
-// Update name on guild update
+client.on("guildUpdate", async (oldGuild: Guild, newGuild: Guild) => {
+  if (oldGuild.name !== newGuild.name) {
+    logger.info('Guild name updated', {
+      meta: {
+        serverId: newGuild.id,
+      },
+    });
 
-client.on(events.message, async (userMessage: Message) => {
+    const serverRepository = getCustomRepository(ServerRepository);
+    const updatedServer = await serverRepository.updateServerName(newGuild.id, newGuild.name);
+    if (updatedServer) {
+      logger.notice('Guild name update written', {
+        meta: {
+          serverId: newGuild.id,
+          oldName: oldGuild.name,
+          newName: updatedServer.name
+        }
+      });
+    }
+  }
+});
+
+client.on("roleDelete", async (deletedRole: Role) => {
+  const guild = deletedRole.guild;
+  const serverRepository = getCustomRepository(ServerRepository);
+  const updatedServer = await serverRepository.deleteRole(guild.id, deletedRole);
+  if (updatedServer) {
+    logger.notice(`🗑 Deleted role ${deletedRole.name}:${deletedRole.id}`, {
+      meta: {
+        serverId: guild.id
+      },
+      deletedRole
+    });
+  }
+});
+
+client.on("message", async (userMessage: Message) => {
   if (userMessage.author.bot) {
     return;
   }
@@ -73,7 +126,9 @@ client.on(events.message, async (userMessage: Message) => {
         .join(' ');
 
       logger.info('Processing command', {
-        server: userMessage.guild?.id,
+        meta: {
+          serverId: userMessage.guild?.id,
+        },
         user: userMessage.author,
         command
       });
@@ -95,6 +150,6 @@ function getIdFromMention(mention: string) {
   return mention;
 }
 
-client.on(events.error, error => {
+client.on("error", error => {
   logger.error(error);
 });

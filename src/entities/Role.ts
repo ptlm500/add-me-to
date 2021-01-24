@@ -15,7 +15,7 @@ export default class Role extends BaseEntity {
 
   @Column()
   serverId: number;
-  @ManyToOne(() => Server, server => server.denyList)
+  @ManyToOne(() => Server, server => server.denyList, { onDelete: 'CASCADE' })
   @JoinColumn({ name: "serverId" })
   server: Server;
 
