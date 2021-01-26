@@ -120,20 +120,18 @@ client.on("message", async (userMessage: Message) => {
     return;
   }
   if (client.user && userMessage.mentions.has(client.user.id)) {
-    if (userMessage.author.id === process.env.ADMIN_ID) {
-      const command = userMessage.content.split(' ')
-        .filter(commandPart => !userMessage.mentions.has(getIdFromMention(commandPart)))
-        .join(' ');
+    const command = userMessage.content.split(' ')
+      .filter(commandPart => !userMessage.mentions.has(getIdFromMention(commandPart)))
+      .join(' ');
 
-      logger.info('Processing command', {
-        meta: {
-          serverId: userMessage.guild?.id,
-        },
-        user: userMessage.author,
-        command
-      });
-      commandHandler.onMessage(command, userMessage);
-    }
+    logger.info('Processing command', {
+      meta: {
+        serverId: userMessage.guild?.id,
+      },
+      user: userMessage.author,
+      command
+    });
+    commandHandler.onMessage(command, userMessage);
   }
 });
 
