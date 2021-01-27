@@ -21,7 +21,7 @@ export default class RemoveRoles extends Command {
 
       if (denyList) {
         return Promise.all(userMessage.mentions.roles.map(requestedRole =>
-          tryAddingRole(member, requestedRole, denyList)
+          tryRemovingRole(member, requestedRole, denyList)
         ));
       }
     }
@@ -30,7 +30,7 @@ export default class RemoveRoles extends Command {
 
 }
 
-async function tryAddingRole(member: GuildMember, requestedRole: DiscordRole, denyList: Role[]) {
+async function tryRemovingRole(member: GuildMember, requestedRole: DiscordRole, denyList: Role[]) {
   if (canManageRole(denyList, requestedRole)) {
     return removeRoleFromMember(member, requestedRole).catch(e => {
       logger.warning('⚠ Couldn\'t remove requested role', {
