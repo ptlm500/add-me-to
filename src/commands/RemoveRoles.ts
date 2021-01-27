@@ -8,9 +8,9 @@ import DiscordApiError from "../errors/DiscordApiError";
 import { Role } from "../entities";
 import logger from "../logger/logger";
 
-export default class AddRoles extends Command {
-  readonly name = "add me to";
-  readonly aliases = ["to", "add"];
+export default class RemoveRoles extends Command {
+  readonly name = "remove";
+  readonly aliases = ["remove me from", "delete"];
 
   async onRun(userMessage: Message) {
     const serverRepository = getCustomRepository(ServerRepository);
@@ -21,18 +21,19 @@ export default class AddRoles extends Command {
 
       if (denyList) {
         return Promise.all(userMessage.mentions.roles.map(requestedRole =>
-          tryAddingRole(member, requestedRole, denyList)
+          tryRemovingRole(member, requestedRole, denyList)
         ));
       }
     }
     return false;
   }
+
 }
 
-async function tryAddingRole(member: GuildMember, requestedRole: DiscordRole, denyList: Role[]) {
+async function tryRemovingRole(member: GuildMember, requestedRole: DiscordRole, denyList: Role[]) {
   if (canManageRole(denyList, requestedRole)) {
-    return addRoleToMember(member, requestedRole).catch(e => {
-      logger.warning('⚠ Couldn\'t add requested role', {
+    return removeRoleFromMember(member, requestedRole).catch(e => {
+      logger.warning('⚠ Couldn\'t remove requested role', {
         meta: {
           serverId: member.guild.id,
         },
@@ -46,13 +47,15 @@ async function tryAddingRole(member: GuildMember, requestedRole: DiscordRole, de
   }
 }
 
-function addRoleToMember(member: GuildMember, role: DiscordRole) {
-  logger.info(`✏ Adding role ${role.name} to ${member.displayName}`, {
+
+function removeRoleFromMember(member: GuildMember, role: DiscordRole) {
+  logger.info(`🗑 Removing ${role.name} from ${member.displayName}`, {
     meta: {
       serverId: member.guild.id,
     },
     role,
     user: member
   });
-  return member.roles.add(role);
+  return member.roles.remove(role);
 }
+
