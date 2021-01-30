@@ -12,7 +12,7 @@ export default class AddRoles extends Command {
   readonly name = "add me to";
   readonly aliases = ["to", "add"];
 
-  async onRun(userMessage: Message) {
+  async onRun(userMessage: Message): Promise<boolean> {
     const serverRepository = getCustomRepository(ServerRepository);
     const serverId = userMessage?.guild?.id;
     const member = userMessage?.member;
@@ -22,7 +22,7 @@ export default class AddRoles extends Command {
       if (denyList) {
         return Promise.all(userMessage.mentions.roles.map(requestedRole =>
           tryAddingRole(member, requestedRole, denyList)
-        ));
+        )) ? true : false;
       }
     }
     return false;

@@ -10,7 +10,7 @@ export default class AddAdminRoles extends Command {
   readonly aliases = ["add admin"];
   readonly requiresAdmin = true;
 
-  async onRun(userMessage: Message) {
+  async onRun(userMessage: Message): Promise<boolean> {
     if (userMessage && userMessage.guild) {
       const mentionedRoles = userMessage.mentions.roles;
 

@@ -14,22 +14,24 @@ interface ICommand {
   readonly name: string;
   readonly aliases: string[];
   requiresAdmin: boolean;
-  onRun(userMessage: Message): boolean;
-  onSuccess(userMessage: Message): any;
-  onError(error: any, userMessage: Message): any;
+  onRun(userMessage: Message): Promise<boolean>;
+  onSuccess(userMessage: Message): void;
+  onError(error: BaseError|Error, userMessage: Message): void;
 }
 
 export default class Command implements ICommand {
   readonly name: string;
   readonly aliases: string[];
-  requiresAdmin: boolean = false;
-  onRun(_userMessage: Message): any { };
+  requiresAdmin = false;
+  onRun(_userMessage: Message): Promise<boolean> {
+    throw new Error("No run method defined")
+  }
 
-  onSuccess(userMessage: Message): any {
+  onSuccess(userMessage: Message): void {
     userMessage.react(reacts.done);
-  };
+  }
 
-  onError(error: BaseError, userMessage: Message): any {
+  onError(error: BaseError, userMessage: Message): void {
     logger.warning(error.message, {
       meta: {
         serverId: userMessage.guild?.id,
@@ -38,9 +40,9 @@ export default class Command implements ICommand {
       userMessage
     });
     userMessage.react(error.emoji);
-  };
+  }
 
-  async userIsAdminOnServer(user: GuildMember | null, serverId: string) {
+  async userIsAdminOnServer(user: GuildMember | null, serverId: string): Promise<boolean> {
     if (user?.permissions.has("ADMINISTRATOR")) {
       return true;
     }
@@ -48,13 +50,13 @@ export default class Command implements ICommand {
     const serverRepository = getCustomRepository(ServerRepository);
     const adminRoles = await serverRepository.getAdminRolesByServer(serverId);
     if (user && adminRoles) {
-      return userHasAdminRole(user, adminRoles);
+      return userHasAdminRole(user, adminRoles) ? true : false;
     }
 
     return false;
   }
 
-  async run(userMessage: Message) {
+  async run(userMessage: Message): Promise<void> {
     if (userMessage && userMessage.guild) {
       try {
         const member = userMessage.member;

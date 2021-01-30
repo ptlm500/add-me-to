@@ -7,7 +7,7 @@ export default class SettingsEmbed extends MessageEmbed {
     const options : MessageEmbedOptions = {
       color: 0x0099ff,
       title: 'Admin roles'
-    }
+    };
 
     const roleFields = adminRoles.map(generateAdminRoleFields);
 
@@ -21,5 +21,5 @@ function generateAdminRoleFields(adminRole: Role) : EmbedFieldData {
   return {
     name: `id: ${adminRole.discordId}`,
     value: `<@&${adminRole.discordId}>\nAdded: ${adminRole.updatedAt}`
-  }
+  };
 }
