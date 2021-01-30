@@ -5,9 +5,9 @@ import {
 import Command from "../command-handler/Command";
 import ServerRepository from "../repositories/ServerRepository";
 
-export default class SetAdminRoles extends Command {
-  readonly name = "set admin roles";
-  readonly aliases = ["set admin"];
+export default class AddAdminRoles extends Command {
+  readonly name = "add admin roles";
+  readonly aliases = ["add admin"];
   readonly requiresAdmin = true;
 
   async onRun(userMessage: Message) {
@@ -19,7 +19,7 @@ export default class SetAdminRoles extends Command {
         }
 
         const serverRepository = getCustomRepository(ServerRepository);
-        await serverRepository.setAdminRoles(userMessage.guild.id, mentionedRoles);
+        await serverRepository.addAdminRoles(userMessage.guild.id, mentionedRoles);
         return true;
     }
     return false;

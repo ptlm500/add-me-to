@@ -19,7 +19,19 @@ export default class ServerRepository extends AbstractRepository<Server> {
     return null;
   }
 
-  async setAdminRoles(serverId: string, roles: Collection<string, DiscordRole>) {
+  async allowRoles(serverId: string, roles: Collection<string, DiscordRole>) {
+    const server = await this.repository.findOne({ discordId: serverId });
+
+    if (server) {
+      roles.forEach(async role => {
+         await Role.delete({ discordId: `${role.id}`, serverId: server.id });
+      });
+    }
+
+    return null;
+  }
+
+  async addAdminRoles(serverId: string, roles: Collection<string, DiscordRole>) {
     const server = await this.repository.findOne({ discordId: serverId });
 
     if (server) {
@@ -31,12 +43,12 @@ export default class ServerRepository extends AbstractRepository<Server> {
     return null;
   }
 
-  async allowRoles(serverId: string, roles: Collection<string, DiscordRole>) {
+  async removeAdminRoles(serverId: string, roles: Collection<string, DiscordRole>) {
     const server = await this.repository.findOne({ discordId: serverId });
 
     if (server) {
       roles.forEach(async role => {
-         await Role.delete({ discordId: `${role.id}`, serverId: server.id });
+         await AdminRole.delete({ discordId: `${role.id}`, serverId: server.id });
       });
     }
 
