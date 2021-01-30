@@ -1,5 +1,7 @@
 # add me to
 
+![ci](https://github.com/ptlm500/add-me-to/workflows/ci/badge.svg?branch=main)
+
 A simple Discord role management bot
 
 ## Repository setup
