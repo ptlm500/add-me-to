@@ -119,7 +119,7 @@ client.on("message", async (userMessage: Message) => {
   if (userMessage.author.bot) {
     return;
   }
-  if (client.user && userMessage.mentions.has(client.user.id)) {
+  if (client.user && userMessage.mentions.has(client.user.id) && !userMessage.mentions.everyone) {
     const command = userMessage.content.split(' ')
       .filter(commandPart => !userMessage.mentions.has(getIdFromMention(commandPart)))
       .join(' ');
