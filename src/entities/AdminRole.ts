@@ -3,9 +3,9 @@ import Server from "./Server";
 import BaseRole from "./BaseRole";
 
 @Entity()
-export default class Role extends BaseRole {
+export default class AdminRole extends BaseRole {
 
-  @ManyToOne(() => Server, server => server.denyList, { onDelete: 'CASCADE' })
+  @ManyToOne(() => Server, server => server.adminRoles, { onDelete: 'CASCADE' })
   @JoinColumn({ name: "serverId" })
   server: Server;
 
