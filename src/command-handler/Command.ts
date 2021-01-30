@@ -1,15 +1,19 @@
 import { GuildMember, Message } from "discord.js";
+import { getCustomRepository } from "typeorm";
 import BaseError from "../errors/BaseError";
 import UserPermissionsError from "../errors/UserPermissionsError";
 import {
   reacts
 } from "../config.json";
+import ServerRepository from "../repositories/ServerRepository";
 import logger from "../logger/logger";
+import userHasAdminRole from "../utils/userHasAdminRole";
 
 interface ICommand {
+  // TODO add test to ensure command names and aliases are unique
   readonly name: string;
   readonly aliases: string[];
-  roleIds: string[];
+  requiresAdmin: boolean;
   onRun(userMessage: Message): boolean;
   onSuccess(userMessage: Message): any;
   onError(error: any, userMessage: Message): any;
@@ -18,7 +22,7 @@ interface ICommand {
 export default class Command implements ICommand {
   readonly name: string;
   readonly aliases: string[];
-  roleIds: string[];
+  requiresAdmin: boolean = false;
   onRun(_userMessage: Message): any { };
 
   onSuccess(userMessage: Message): any {
@@ -36,30 +40,35 @@ export default class Command implements ICommand {
     userMessage.react(error.emoji);
   };
 
-  userHasRequiredRole(user: GuildMember | null) {
-    if (this.roleIds?.length) {
-      return this.roleIds.find(
-        roleId => user?.roles.cache.find(
-          userRole => userRole.id === roleId
-        )
-      );
+  async userIsAdminOnServer(user: GuildMember | null, serverId: string) {
+    if (user?.permissions.has("ADMINISTRATOR")) {
+      return true;
     }
 
-    return true;
+    const serverRepository = getCustomRepository(ServerRepository);
+    const adminRoles = await serverRepository.getAdminRolesByServer(serverId);
+    if (user && adminRoles) {
+      return userHasAdminRole(user, adminRoles);
+    }
+
+    return false;
   }
 
   async run(userMessage: Message) {
-    try {
-      const member = userMessage.member;
-      if (this.userHasRequiredRole(member)) {
-        const success = await this.onRun(userMessage);
+    if (userMessage && userMessage.guild) {
+      try {
+        const member = userMessage.member;
 
-        success && this.onSuccess(userMessage);
-      } else {
-        throw new UserPermissionsError(`🔒 ${member?.displayName}:${member?.id} doesn't have permissions to add roles.`);
+        if (!this.requiresAdmin || await this.userIsAdminOnServer(member, userMessage.guild.id)) {
+          const success = await this.onRun(userMessage);
+
+          success && this.onSuccess(userMessage);
+        } else {
+          throw new UserPermissionsError(`🔒 ${member?.displayName}:${member?.id} doesn't have permissions to ${this.name}.`);
+        }
+      } catch (e) {
+        this.onError(e, userMessage);
       }
-    } catch (e) {
-      this.onError(e, userMessage);
     }
   }
 }

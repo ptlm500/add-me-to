@@ -5,8 +5,9 @@ import {
 import Command from "../command-handler/Command";
 import ServerRepository from "../repositories/ServerRepository";
 
-export default class Deny extends Command {
-  readonly name = "deny";
+export default class AddAdminRoles extends Command {
+  readonly name = "remove admin roles";
+  readonly aliases = ["remove admin", "delete admin", "delete admin roles"];
   readonly requiresAdmin = true;
 
   async onRun(userMessage: Message) {
@@ -18,7 +19,7 @@ export default class Deny extends Command {
         }
 
         const serverRepository = getCustomRepository(ServerRepository);
-        await serverRepository.denyRoles(userMessage.guild.id, mentionedRoles);
+        await serverRepository.removeAdminRoles(userMessage.guild.id, mentionedRoles);
         return true;
     }
     return false;
