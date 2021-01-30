@@ -3,7 +3,7 @@ import {
   AbstractRepository
 } from "typeorm";
 import { Collection, Role as DiscordRole } from "discord.js";
-import { Server, Role } from '../entities';
+import { Server, Role, AdminRole } from '../entities';
 
 @EntityRepository(Server)
 export default class ServerRepository extends AbstractRepository<Server> {
@@ -13,6 +13,18 @@ export default class ServerRepository extends AbstractRepository<Server> {
     if (server) {
       roles.forEach(async role => {
          await Role.create({ discordId: `${role.id}`, serverId: server.id }).save();
+      });
+    }
+
+    return null;
+  }
+
+  async setAdminRoles(serverId: string, roles: Collection<string, DiscordRole>) {
+    const server = await this.repository.findOne({ discordId: serverId });
+
+    if (server) {
+      roles.forEach(async role => {
+         await AdminRole.create({ discordId: `${role.id}`, serverId: server.id }).save();
       });
     }
 
@@ -36,6 +48,16 @@ export default class ServerRepository extends AbstractRepository<Server> {
 
     if (server) {
       return server.denyList;
+    }
+
+    return null;
+  }
+
+  async getAdminRolesByServer(serverId: string) {
+    const server = await this.repository.findOne({ discordId: serverId }, { relations: ['adminRoles'] });
+
+    if (server) {
+      return server.adminRoles;
     }
 
     return null;
