@@ -17,7 +17,7 @@ export default class CommandHandler {
     });
   }
 
-  onMessage(command: string, userMessage: Message) {
+  onMessage(command: string, userMessage: Message):void {
     const handler = this.registeredCommands[command] || this.defaultCommand;
 
     if (handler) {

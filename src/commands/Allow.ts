@@ -9,7 +9,7 @@ export default class Allow extends Command {
   readonly name = "allow";
   readonly requiresAdmin = true;
 
-  async onRun(userMessage: Message) {
+  async onRun(userMessage: Message): Promise<boolean> {
     if (userMessage && userMessage.guild) {
       const mentionedRoles = userMessage.mentions.roles;
 

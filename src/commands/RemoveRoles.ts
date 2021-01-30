@@ -12,7 +12,7 @@ export default class RemoveRoles extends Command {
   readonly name = "remove";
   readonly aliases = ["remove me from", "delete"];
 
-  async onRun(userMessage: Message) {
+  async onRun(userMessage: Message): Promise<boolean> {
     const serverRepository = getCustomRepository(ServerRepository);
     const serverId = userMessage?.guild?.id;
     const member = userMessage?.member;
@@ -22,7 +22,7 @@ export default class RemoveRoles extends Command {
       if (denyList) {
         return Promise.all(userMessage.mentions.roles.map(requestedRole =>
           tryRemovingRole(member, requestedRole, denyList)
-        ));
+        )) ? true : false;
       }
     }
     return false;

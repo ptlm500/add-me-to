@@ -1,61 +1,70 @@
 import {
   EntityRepository,
-  AbstractRepository
+  AbstractRepository,
+  DeleteResult
 } from "typeorm";
 import { Collection, Role as DiscordRole } from "discord.js";
 import { Server, Role, AdminRole } from '../entities';
 
 @EntityRepository(Server)
 export default class ServerRepository extends AbstractRepository<Server> {
-  async denyRoles(serverId: string, roles: Collection<string, DiscordRole>) {
+  async denyRoles(serverId: string, roles: Collection<string, DiscordRole>): Promise<Server|null> {
     const server = await this.repository.findOne({ discordId: serverId });
 
     if (server) {
       roles.forEach(async role => {
          await Role.create({ discordId: `${role.id}`, serverId: server.id }).save();
+
+         return server;
       });
     }
 
     return null;
   }
 
-  async allowRoles(serverId: string, roles: Collection<string, DiscordRole>) {
+  async allowRoles(serverId: string, roles: Collection<string, DiscordRole>): Promise<Server|null> {
     const server = await this.repository.findOne({ discordId: serverId });
 
     if (server) {
       roles.forEach(async role => {
          await Role.delete({ discordId: `${role.id}`, serverId: server.id });
       });
+
+      return server;
     }
 
     return null;
   }
 
-  async addAdminRoles(serverId: string, roles: Collection<string, DiscordRole>) {
+  async addAdminRoles(serverId: string, roles: Collection<string, DiscordRole>): Promise<Server|null> {
     const server = await this.repository.findOne({ discordId: serverId });
 
     if (server) {
       roles.forEach(async role => {
          await AdminRole.create({ discordId: `${role.id}`, serverId: server.id }).save();
       });
+
+      return server;
     }
 
     return null;
   }
 
-  async removeAdminRoles(serverId: string, roles: Collection<string, DiscordRole>) {
+  async removeAdminRoles(serverId: string, roles: Collection<string, DiscordRole>): Promise<Server|null> {
     const server = await this.repository.findOne({ discordId: serverId });
 
     if (server) {
       roles.forEach(async role => {
          await AdminRole.delete({ discordId: `${role.id}`, serverId: server.id });
       });
+
+      return server;
     }
 
-    return null;
+   return null;
   }
 
-  async getDenyedRolesByServer(serverId: string) {
+  async getDenyedRolesByServer(serverId: string): Promise<Role[]|null> {
     const server = await this.repository.findOne({ discordId: serverId }, { relations: ['denyList'] });
 
     if (server) {
@@ -65,7 +74,7 @@ export default class ServerRepository extends AbstractRepository<Server> {
     return null;
   }
 
-  async getAdminRolesByServer(serverId: string) {
+  async getAdminRolesByServer(serverId: string): Promise<Role[]|null> {
     const server = await this.repository.findOne({ discordId: serverId }, { relations: ['adminRoles'] });
 
     if (server) {
@@ -75,11 +84,11 @@ export default class ServerRepository extends AbstractRepository<Server> {
     return null;
   }
 
-  async delete(serverId: string) {
+  async delete(serverId: string): Promise<DeleteResult> {
     return await this.repository.delete({ discordId: serverId });
   }
 
-  async deleteRole(serverId: string, role: DiscordRole) {
+  async deleteRole(serverId: string, role: DiscordRole): Promise<DeleteResult|null> {
     const server = await this.repository.findOne({ discordId: serverId });
 
     if (server) {
@@ -89,7 +98,7 @@ export default class ServerRepository extends AbstractRepository<Server> {
     return null;
   }
 
-  async updateServerName(serverId: string, serverName: string) {
+  async updateServerName(serverId: string, serverName: string): Promise<Server|null> {
     const server = await this.repository.findOne({ discordId: serverId });
 
     if (server) {
