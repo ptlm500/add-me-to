@@ -7,6 +7,7 @@ import ServerRepository from "../repositories/ServerRepository";
 
 export default class Deny extends Command {
   readonly name = "deny";
+  readonly requiresAdmin = true;
 
   async onRun(userMessage: Message) {
     if (userMessage && userMessage.guild) {
