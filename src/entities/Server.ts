@@ -14,10 +14,10 @@ export default class Server extends BaseEntity {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  @Column({ unique: true })
+  @Column('text',{ unique: true })
   discordId!: string;
 
-  @Column()
+  @Column('text')
   name: string;
 
   @OneToMany(() => Role, role => role.server, { onDelete: 'CASCADE' })

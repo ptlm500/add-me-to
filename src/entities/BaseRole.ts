@@ -12,9 +12,9 @@ export default class Role extends BaseEntity {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  @Column()
+  @Column('text')
   serverId: number;
 
-  @Column({ unique: true })
+  @Column('text',{ unique: true })
   discordId!: string;
 }
