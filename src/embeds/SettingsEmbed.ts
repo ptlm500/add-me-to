@@ -1,5 +1,5 @@
 import { EmbedFieldData, MessageEmbed, MessageEmbedOptions } from "discord.js";
-import { Role } from "src/entities";
+import { Role } from "../entities";
 
 export default class SettingsEmbed extends MessageEmbed {
   constructor(adminRoles: Role[]) {
