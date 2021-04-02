@@ -1,13 +1,12 @@
-import { GuildMember, Message } from "discord.js";
-import { getCustomRepository } from "typeorm";
+import { Message } from "discord.js";
 import BaseError from "../errors/BaseError";
 import UserPermissionsError from "../errors/UserPermissionsError";
+import ServerMembershipNotFoundError from "../errors/ServerMembershipNotFoundError";
 import {
   reacts
 } from "../config.json";
-import ServerRepository from "../repositories/ServerRepository";
 import logger from "../logger/logger";
-import userHasAdminRole from "../utils/userHasAdminRole";
+import User from "../user/User";
 
 interface ICommand {
   // TODO add test to ensure command names and aliases are unique
@@ -42,31 +41,22 @@ export default class Command implements ICommand {
     userMessage.react(error.emoji);
   }
 
-  async userIsAdminOnServer(user: GuildMember | null, serverId: string): Promise<boolean> {
-    if (user?.permissions.has("ADMINISTRATOR")) {
-      return true;
-    }
-
-    const serverRepository = getCustomRepository(ServerRepository);
-    const adminRoles = await serverRepository.getAdminRolesByServer(serverId);
-    if (user && adminRoles) {
-      return userHasAdminRole(user, adminRoles) ? true : false;
-    }
-
-    return false;
-  }
-
   async run(userMessage: Message): Promise<void> {
     if (userMessage && userMessage.guild) {
       try {
-        const member = userMessage.member;
+        const serverMembership = userMessage.member;
 
-        if (!this.requiresAdmin || await this.userIsAdminOnServer(member, userMessage.guild.id)) {
+        if (!serverMembership) {
+          throw new ServerMembershipNotFoundError();
+        }
+        const user = new User(serverMembership)
+
+        if (!this.requiresAdmin || await user.canAdministerRoles(userMessage.guild.id)) {
           const success = await this.onRun(userMessage);
 
           success && this.onSuccess(userMessage);
         } else {
-          throw new UserPermissionsError(`🔒 ${member?.displayName}:${member?.id} doesn't have permissions to ${this.name}.`);
+          throw new UserPermissionsError(`🔒 ${serverMembership.displayName}:${serverMembership.id} doesn't have permissions to ${this.name}.`);
         }
       } catch (e) {
         this.onError(e, userMessage);

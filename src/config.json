@@ -3,6 +3,7 @@
     "done": "✅",
     "userHasRole": "🤷",
     "error": "🤦",
-    "notAllowed": "👮"
+    "notAllowed": "👮",
+    "notFound": "❓"
   }
 }
