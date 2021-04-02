@@ -10,7 +10,6 @@ import logger from "../logger/logger";
 import userHasAdminRole from "../utils/userHasAdminRole";
 
 interface ICommand {
-  // TODO add test to ensure command names and aliases are unique
   readonly name: string;
   readonly aliases: string[];
   requiresAdmin: boolean;
