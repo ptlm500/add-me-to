@@ -19,7 +19,7 @@
     "discord.js": "^12.5.1",
     "dotenv": "^8.2.0",
     "pg": "^8.5.1",
-    "typeorm": "^0.2.30",
+    "typeorm": "^0.2.31",
     "winston": "^3.3.3",
     "winston-discord-transport": "^1.3.0"
   },
