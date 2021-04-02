@@ -16,6 +16,11 @@ export default class AddRoles extends Command {
     const serverRepository = getCustomRepository(ServerRepository);
     const serverId = userMessage?.guild?.id;
     const member = userMessage?.member;
+
+    if (userMessage.mentions.roles.size === 0) {
+      return false;
+    }
+
     if (serverId && member) {
       const denyList = await serverRepository.getDenyedRolesByServer(serverId);
 
