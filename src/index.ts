@@ -4,7 +4,6 @@ import { Guild, Message, Role } from "discord.js";
 import {
   createConnection,
   getConnectionOptions,
-  getCustomRepository
 } from "typeorm";
 import Discord from "discord.js";
 import { Server } from "./entities";
@@ -12,8 +11,7 @@ import commands, { addRoles } from './commands';
 import CommandHandler from "./command-handler/CommandHandler";
 import logger from './logger/logger';
 import TypeOrmLogger from './logger/TypeOrmLogger';
-
-import ServerRepository from "./repositories/ServerRepository";
+import { deleteServer, updateServerName, deleteRole } from "./services/serverManagementService";
 
 const typeOrmLogger = new TypeOrmLogger();
 const client = new Discord.Client();
@@ -70,8 +68,7 @@ client.on("guildDelete", async (guild) => {
       serverId: guild.id,
     }
   });
-  const serverRepository = getCustomRepository(ServerRepository);
-  serverRepository.delete(guild.id).then(() => {
+  deleteServer(guild.id).then(() => {
     logger.notice(`🗑 Server records removed ${guild.name}:${guild.id}`, {
       meta: {
         serverId: guild.id,
@@ -88,8 +85,7 @@ client.on("guildUpdate", async (oldGuild: Guild, newGuild: Guild) => {
       },
     });
 
-    const serverRepository = getCustomRepository(ServerRepository);
-    const updatedServer = await serverRepository.updateServerName(newGuild.id, newGuild.name);
+    const updatedServer = await updateServerName(newGuild.id, newGuild.name);
     if (updatedServer) {
       logger.notice('Guild name update written', {
         meta: {
@@ -104,8 +100,7 @@ client.on("guildUpdate", async (oldGuild: Guild, newGuild: Guild) => {
 
 client.on("roleDelete", async (deletedRole: Role) => {
   const guild = deletedRole.guild;
-  const serverRepository = getCustomRepository(ServerRepository);
-  const updatedServer = await serverRepository.deleteRole(guild.id, deletedRole);
+  const updatedServer = await deleteRole(guild.id, deletedRole);
   if (updatedServer) {
     logger.notice(`🗑 Deleted role ${deletedRole.name}:${deletedRole.id}`, {
       meta: {

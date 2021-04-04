@@ -3,110 +3,92 @@ import {
   AbstractRepository,
   DeleteResult
 } from "typeorm";
-import { Collection, Role as DiscordRole } from "discord.js";
+import ServerNotFoundError from "../errors/ServerMembershipNotFoundError";
 import { Server, Role, AdminRole } from '../entities';
 
 @EntityRepository(Server)
 export default class ServerRepository extends AbstractRepository<Server> {
-  async denyRoles(serverId: string, roles: Collection<string, DiscordRole>): Promise<Server|null> {
-    const server = await this.repository.findOne({ discordId: serverId });
+  async getServerById(serverId: string, relations?: string[]): Promise<Server> {
+    const server = await this.repository.findOne(
+      { discordId: serverId },
+      { relations }
+    );
 
-    if (server) {
-      roles.forEach(async role => {
-         await Role.create({ discordId: `${role.id}`, serverId: server.id }).save();
-
-         return server;
-      });
+    if (!server) {
+      throw new ServerNotFoundError();
     }
 
-    return null;
+    return server;
   }
 
-  async allowRoles(serverId: string, roles: Collection<string, DiscordRole>): Promise<Server|null> {
-    const server = await this.repository.findOne({ discordId: serverId });
+  async denyRoles(serverId: string, roleIds: string[]): Promise<Server> {
+    const server = await this.getServerById(serverId);
 
-    if (server) {
-      roles.forEach(async role => {
-         await Role.delete({ discordId: `${role.id}`, serverId: server.id });
-      });
+    roleIds.forEach(async roleId => {
+        await Role.create({ discordId: `${roleId}`, serverId: server.id }).save();
+    });
 
-      return server;
-    }
-
-    return null;
+    return server;
   }
 
-  async addAdminRoles(serverId: string, roles: Collection<string, DiscordRole>): Promise<Server|null> {
-    const server = await this.repository.findOne({ discordId: serverId });
+  async allowRoles(serverId: string, roleIds: string[]): Promise<Server> {
+    const server = await this.getServerById(serverId);
 
-    if (server) {
-      roles.forEach(async role => {
-         await AdminRole.create({ discordId: `${role.id}`, serverId: server.id }).save();
-      });
+    roleIds.forEach(async roleId => {
+        await Role.delete({ discordId: `${roleId}`, serverId: server.id });
+    });
 
-      return server;
-    }
-
-    return null;
+    return server;
   }
 
-  async removeAdminRoles(serverId: string, roles: Collection<string, DiscordRole>): Promise<Server|null> {
-    const server = await this.repository.findOne({ discordId: serverId });
+  async addAdminRoles(serverId: string, roleIds: string[]): Promise<Server> {
+    const server = await this.getServerById(serverId);
 
-    if (server) {
-      roles.forEach(async role => {
-         await AdminRole.delete({ discordId: `${role.id}`, serverId: server.id });
-      });
+    roleIds.forEach(async roleId => {
+        await AdminRole.create({ discordId: `${roleId}`, serverId: server.id }).save();
+    });
 
-      return server;
-    }
-
-   return null;
+    return server;
   }
 
-  async getDenyedRolesByServer(serverId: string): Promise<Role[]|null> {
-    const server = await this.repository.findOne({ discordId: serverId }, { relations: ['denyList'] });
+  async removeAdminRoles(serverId: string, roleIds: string[]): Promise<Server> {
+    const server = await this.getServerById(serverId);
 
-    if (server) {
-      return server.denyList;
-    }
+    roleIds.forEach(async roleId => {
+        await AdminRole.delete({ discordId: `${roleId}`, serverId: server.id });
+    });
 
-    return null;
+    return server;
   }
 
-  async getAdminRolesByServer(serverId: string): Promise<Role[]|null> {
-    const server = await this.repository.findOne({ discordId: serverId }, { relations: ['adminRoles'] });
+  async getDeniedRolesByServer(serverId: string): Promise<Role[]> {
+    const server = await this.getServerById(serverId, ['denyList']);
 
-    if (server) {
-      return server.adminRoles;
-    }
+    return server.denyList;
+  }
 
-    return null;
+  async getAdminRolesByServer(serverId: string): Promise<AdminRole[]> {
+    const server = await this.getServerById(serverId, ['adminRoles']);
+
+    return server.adminRoles;
   }
 
   async delete(serverId: string): Promise<DeleteResult> {
     return await this.repository.delete({ discordId: serverId });
   }
 
-  async deleteRole(serverId: string, role: DiscordRole): Promise<DeleteResult|null> {
-    const server = await this.repository.findOne({ discordId: serverId });
+  async deleteRole(serverId: string, roleId: string): Promise<DeleteResult> {
+    const server = await this.getServerById(serverId);
 
-    if (server) {
-      return Role.delete({ discordId: `${role.id}`, serverId: server.id });
-    }
-
-    return null;
+    return Role.delete({ discordId: `${roleId}`, serverId: server.id });
   }
 
-  async updateServerName(serverId: string, serverName: string): Promise<Server|null> {
-    const server = await this.repository.findOne({ discordId: serverId });
+  async updateServerName(serverId: string, newName: string): Promise<Server> {
+    const server = await this.getServerById(serverId);
 
-    if (server) {
-      return this.repository.save({
-        ...server,
-        name: serverName
-      });
-    }
-    return null;
+    return this.repository.save({
+      ...server,
+      name: newName
+    });
   }
 }

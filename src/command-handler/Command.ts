@@ -43,19 +43,19 @@ export default class Command implements ICommand {
   async run(userMessage: Message): Promise<void> {
     if (userMessage && userMessage.guild) {
       try {
-        const serverMembership = userMessage.member;
+        const guildMember = userMessage.member;
 
-        if (!serverMembership) {
+        if (!guildMember) {
           throw new ServerMembershipNotFoundError();
         }
-        const user = new User(serverMembership)
+        const user = User.fromGuildMember(guildMember);
 
         if (!this.requiresAdmin || await user.canAdministerRoles(userMessage.guild.id)) {
           const success = await this.onRun(userMessage);
 
           success && this.onSuccess(userMessage);
         } else {
-          throw new UserPermissionsError(`🔒 ${serverMembership.displayName}:${serverMembership.id} doesn't have permissions to ${this.name}.`);
+          throw new UserPermissionsError(`🔒 ${guildMember.displayName}:${guildMember.id} doesn't have permissions to ${this.name}.`);
         }
       } catch (e) {
         this.onError(e, userMessage);

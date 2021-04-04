@@ -1,9 +1,6 @@
 import { Message } from "discord.js";
-import {
-  getCustomRepository
-} from "typeorm";
+import { allowRoles } from "../services/serverManagementService";
 import Command from "../command-handler/Command";
-import ServerRepository from "../repositories/ServerRepository";
 
 export default class Allow extends Command {
   readonly name = "allow";
@@ -17,8 +14,7 @@ export default class Allow extends Command {
         throw new Error("No roles mentioned");
       }
 
-      const serverRepository = getCustomRepository(ServerRepository);
-      await serverRepository.allowRoles(userMessage.guild.id, mentionedRoles);
+      await allowRoles(userMessage.guild.id, mentionedRoles);
       return true;
     }
     return false;

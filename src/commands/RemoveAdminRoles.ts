@@ -1,10 +1,6 @@
 import { Message } from "discord.js";
-import {
-  getCustomRepository
-} from "typeorm";
+import { removeAdminRoles } from "../services/serverManagementService";
 import Command from "../command-handler/Command";
-import ServerRepository from "../repositories/ServerRepository";
-
 export default class AddAdminRoles extends Command {
   readonly name = "remove admin roles";
   readonly aliases = ["remove admin", "delete admin", "delete admin roles"];
@@ -18,8 +14,7 @@ export default class AddAdminRoles extends Command {
           throw new Error("No roles mentioned");
         }
 
-        const serverRepository = getCustomRepository(ServerRepository);
-        await serverRepository.removeAdminRoles(userMessage.guild.id, mentionedRoles);
+        await removeAdminRoles(userMessage.guild.id, mentionedRoles);
         return true;
     }
     return false;

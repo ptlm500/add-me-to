@@ -1,17 +1,21 @@
-import { GuildMember } from "discord.js";
-import { getCustomRepository } from "typeorm";
-import { BaseRole } from '../entities';
-import ServerRepository from "../repositories/ServerRepository";
+import { GuildMember, PermissionString, Role as DiscordRole } from "discord.js";
+import { AdminRole } from '../entities';
+import { getAdminRoles} from "../services/serverManagementService";
 
 export default class User {
-  private serverMembership: GuildMember;
+  readonly permissions: PermissionString[];
+  readonly roles: DiscordRole[];
+  constructor(permissions: PermissionString[], roles: DiscordRole[]) {
+    this.permissions = permissions;
+    this.roles = roles;
+  }
 
-  constructor(serverMembership: GuildMember) {
-    this.serverMembership = serverMembership;
+  static fromGuildMember(guildMember: GuildMember): User {
+    return new User(guildMember.permissions.toArray(), guildMember.roles.cache.array())
   }
 
   canAdministerServer(): boolean {
-    return this.serverMembership.permissions.has("ADMINISTRATOR");
+    return this.permissions.includes("ADMINISTRATOR");
   }
 
   async canAdministerRoles(serverId: string): Promise<boolean> {
@@ -19,21 +23,24 @@ export default class User {
       return true;
     }
 
-    const serverRepository = getCustomRepository(ServerRepository);
-    const adminRoles = await serverRepository.getAdminRolesByServer(serverId);
-
+    const adminRoles = await getAdminRoles(serverId);
     if (adminRoles) {
-      return this.HasOneOfRoles(adminRoles);
+      return this.hasOneOfRoles(adminRoles);
     }
 
     return false;
   }
 
-  HasOneOfRoles(roles: BaseRole[]): boolean {
+  hasOneOfRoles(roles: AdminRole[]): boolean {
     if (!roles || roles.length === 0) {
       return true;
     }
-    return roles.find(role => this.serverMembership.roles.cache.has(role.discordId))
-      ? true : false;
+    return roles.find(role =>
+      this.roles.find(r => findRoleById(r, role.discordId))
+    ) ? true : false;
   }
+}
+
+function findRoleById(role: DiscordRole, roleId: string) {
+  return role.id === roleId;
 }

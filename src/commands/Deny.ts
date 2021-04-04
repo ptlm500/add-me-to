@@ -1,9 +1,6 @@
 import { Message } from "discord.js";
-import {
-  getCustomRepository
-} from "typeorm";
+import { denyRoles } from "../services/serverManagementService";
 import Command from "../command-handler/Command";
-import ServerRepository from "../repositories/ServerRepository";
 
 export default class Deny extends Command {
   readonly name = "deny";
@@ -17,8 +14,7 @@ export default class Deny extends Command {
           throw new Error("No roles mentioned");
         }
 
-        const serverRepository = getCustomRepository(ServerRepository);
-        await serverRepository.denyRoles(userMessage.guild.id, mentionedRoles);
+        denyRoles(userMessage.guild.id, mentionedRoles);
         return true;
     }
     return false;

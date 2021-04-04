@@ -2,14 +2,14 @@ import { EmbedFieldData, MessageEmbed, MessageEmbedOptions } from "discord.js";
 import { Role } from "../entities";
 
 export default class DenyListEmbed extends MessageEmbed {
-  constructor(denyedRoles: Role[]) {
+  constructor(deniedRoles: Role[]) {
 
     const options : MessageEmbedOptions = {
       color: 0x0099ff,
       title: 'Denyed roles'
     }
 
-    const roleFields = denyedRoles.map(generateDenyedRoleFields);
+    const roleFields = deniedRoles.map(generateDeniedRoleFields);
 
     options.fields = roleFields;
 
@@ -17,9 +17,9 @@ export default class DenyListEmbed extends MessageEmbed {
   }
 }
 
-function generateDenyedRoleFields(denyedRole: Role) : EmbedFieldData {
+function generateDeniedRoleFields(deniedRole: Role) : EmbedFieldData {
   return {
-    name: `id: ${denyedRole.discordId}`,
-    value: `<@&${denyedRole.discordId}>\nAdded: ${denyedRole.updatedAt}`
+    name: `id: ${deniedRole.discordId}`,
+    value: `<@&${deniedRole.discordId}>\nAdded: ${deniedRole.updatedAt}`
   }
 }

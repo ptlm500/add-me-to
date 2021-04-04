@@ -3,11 +3,11 @@ import {
   reacts
 } from "../config.json";
 
-export default class ServerMembershipNotFoundError extends BaseError {
-  constructor(message = "❓ Server membership not found.") {
+export default class ServerNotFoundError extends BaseError {
+  constructor(message = "❓ Server not found.") {
     super(message);
     this.message = message;
-    this.name = "ServerMembershipNotFoundError";
+    this.name = "ServerNotFoundError";
     this.emoji = reacts.notFound;
   }
 }
