@@ -1,6 +1,7 @@
 import { Message } from "discord.js";
 import Command from "../command-handler/Command";
 import { addAdminRoles } from '../services/serverManagementService';
+import InvalidCommandError from "../errors/InvalidCommandError";
 export default class AddAdminRoles extends Command {
   readonly name = "add admin roles";
   readonly aliases = ["add admin"];
@@ -11,7 +12,7 @@ export default class AddAdminRoles extends Command {
       const mentionedRoles = userMessage.mentions.roles;
 
         if (mentionedRoles.size === 0) {
-          throw new Error("No roles mentioned");
+          throw new InvalidCommandError("🤷 No roles mentioned");
         }
 
         await addAdminRoles(userMessage.guild.id, mentionedRoles);

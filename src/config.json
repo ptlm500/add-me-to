@@ -1,8 +1,8 @@
 {
   "reacts": {
     "done": "✅",
-    "userHasRole": "🤷",
-    "error": "🤦",
+    "invalidCommand": "🤷",
+    "error": "❗",
     "notAllowed": "👮",
     "notFound": "❓"
   }

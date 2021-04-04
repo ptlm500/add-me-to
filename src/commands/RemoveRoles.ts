@@ -1,6 +1,7 @@
 import { Message } from "discord.js";
 import Command from "../command-handler/Command";
 import { removeRoles } from "../controllers/roleManagementController";
+import InvalidCommandError from "../errors/InvalidCommandError";
 
 export default class RemoveRoles extends Command {
   readonly name = "remove";
@@ -8,14 +9,14 @@ export default class RemoveRoles extends Command {
 
   async onRun(userMessage: Message): Promise<boolean> {
     const member = userMessage?.member;
-    const roles = userMessage.mentions.roles;
+    const mentionedRoles = userMessage.mentions.roles;
 
-    if (roles.size === 0) {
-      return false;
+    if (mentionedRoles.size === 0) {
+      throw new InvalidCommandError("🤷 No roles mentioned");
     }
 
     if (member) {
-      return removeRoles(member, roles);
+      return removeRoles(member, mentionedRoles);
     }
     return false;
   }
