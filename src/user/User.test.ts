@@ -74,7 +74,12 @@ describe('canAdministerRoles', () => {
     const result = await user.canAdministerRoles(serverId);
     expect(result).toBeFalsy();
   });
-})
+});
+
+afterAll(() => {
+  discord.cleanup();
+  jest.restoreAllMocks();
+});
 
 function getDiscordRole(id: string): DiscordRole {
   return new DiscordRole(discord.getClient(), { id }, discord.getGuild());
