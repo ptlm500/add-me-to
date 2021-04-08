@@ -8,7 +8,7 @@ export default class AddAdminRoles extends Command {
   readonly requiresAdmin = true;
 
   async onRun(userMessage: Message): Promise<boolean> {
-    if (userMessage && userMessage.guild) {
+    if (userMessage.guild) {
       const mentionedRoles = userMessage.mentions.roles;
 
       if (mentionedRoles.size === 0) {

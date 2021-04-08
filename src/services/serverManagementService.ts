@@ -1,7 +1,7 @@
 import { getCustomRepository } from "typeorm";
 import { Server, AdminRole, Role } from '../entities';
 import ServerRepository from '../repositories/ServerRepository';
-import { Collection, Role as DiscordRole } from "discord.js";
+import { Collection, Role as DiscordRole, Guild } from "discord.js";
 
 export function getAdminRoles(serverId: string): Promise<AdminRole[]|null> {
   return getServerRepository().getAdminRolesByServer(serverId);
@@ -15,6 +15,10 @@ export function addAdminRoles(serverId: string, roles: Collection<string, Discor
 export function removeAdminRoles(serverId: string, roles: Collection<string, DiscordRole>): Promise<Server> {
   const roleIds = roles.map(getRoleId);
   return getServerRepository().removeAdminRoles(serverId, roleIds);
+}
+
+export function createServer(guild: Guild): Promise<Server> {
+  return getServerRepository().create(guild.id, guild.name);
 }
 
 export function updateServerName(serverId: string, newName: string): Promise<Server> {

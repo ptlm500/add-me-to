@@ -73,6 +73,13 @@ export default class ServerRepository extends AbstractRepository<Server> {
     return server.adminRoles;
   }
 
+  async create(serverId: string, serverName: string): Promise<Server> {
+    return Server.create({
+      discordId: serverId,
+      name: serverName
+    }).save();
+  }
+
   async delete(serverId: string): Promise<DeleteResult> {
     return await this.repository.delete({ discordId: serverId });
   }

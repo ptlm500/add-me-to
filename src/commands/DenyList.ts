@@ -7,7 +7,7 @@ export default class DenyList extends Command {
   readonly name = "deny list";
 
   async onRun(userMessage: Message): Promise<boolean> {
-    if (userMessage && userMessage.guild) {
+    if (userMessage.guild) {
       const deniedRoles = await getDeniedRoles(userMessage.guild.id);
 
       if (deniedRoles) {

@@ -3,15 +3,11 @@ import { Role } from "../entities";
 
 export default class DenyListEmbed extends MessageEmbed {
   constructor(deniedRoles: Role[]) {
-
     const options : MessageEmbedOptions = {
       color: 0x0099ff,
-      title: 'Denyed roles'
+      title: 'Denyed roles',
+      fields: deniedRoles.map(generateDeniedRoleFields)
     }
-
-    const roleFields = deniedRoles.map(generateDeniedRoleFields);
-
-    options.fields = roleFields;
 
     super(options);
   }

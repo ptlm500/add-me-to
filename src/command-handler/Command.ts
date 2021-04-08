@@ -22,7 +22,7 @@ export default class Command implements ICommand {
   readonly aliases: string[];
   requiresAdmin = false;
   onRun(_userMessage: Message): Promise<boolean> {
-    throw new Error("No run method defined")
+    throw new Error("No run method defined");
   }
 
   onSuccess(userMessage: Message): void {

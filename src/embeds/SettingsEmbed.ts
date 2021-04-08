@@ -3,15 +3,11 @@ import { Role } from "../entities";
 
 export default class SettingsEmbed extends MessageEmbed {
   constructor(adminRoles: Role[]) {
-
     const options : MessageEmbedOptions = {
       color: 0x0099ff,
-      title: 'Admin roles'
+      title: 'Admin roles',
+      fields: adminRoles.map(generateAdminRoleFields)
     };
-
-    const roleFields = adminRoles.map(generateAdminRoleFields);
-
-    options.fields = roleFields;
 
     super(options);
   }

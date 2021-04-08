@@ -7,7 +7,7 @@ export default class SettingsList extends Command {
   readonly name = "settings list";
 
   async onRun(userMessage: Message): Promise<boolean> {
-    if (userMessage && userMessage.guild) {
+    if (userMessage.guild) {
       const adminRoles = await getAdminRoles(userMessage.guild.id);
 
       if (adminRoles) {
