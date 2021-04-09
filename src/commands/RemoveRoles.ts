@@ -21,5 +21,3 @@ export default class RemoveRoles extends Command {
     return false;
   }
 }
-
-
