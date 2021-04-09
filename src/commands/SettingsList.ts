@@ -5,6 +5,7 @@ import SettingsEmbed from "../embeds/SettingsEmbed";
 
 export default class SettingsList extends Command {
   readonly name = "settings list";
+  readonly aliases = ["settings"];
 
   async onRun(userMessage: Message): Promise<boolean> {
     if (userMessage.guild) {

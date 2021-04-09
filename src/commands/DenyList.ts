@@ -5,6 +5,7 @@ import { getDeniedRoles } from "../services/serverManagementService";
 
 export default class DenyList extends Command {
   readonly name = "deny list";
+  readonly aliases = ["denied"];
 
   async onRun(userMessage: Message): Promise<boolean> {
     if (userMessage.guild) {
