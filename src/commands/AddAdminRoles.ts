@@ -1,25 +1,21 @@
 import { Message } from "discord.js";
-import {
-  getCustomRepository
-} from "typeorm";
 import Command from "../command-handler/Command";
-import ServerRepository from "../repositories/ServerRepository";
-
+import { addAdminRoles } from '../services/serverManagementService';
+import InvalidCommandError from "../errors/InvalidCommandError";
 export default class AddAdminRoles extends Command {
   readonly name = "add admin roles";
   readonly aliases = ["add admin"];
   readonly requiresAdmin = true;
 
   async onRun(userMessage: Message): Promise<boolean> {
-    if (userMessage && userMessage.guild) {
+    if (userMessage.guild) {
       const mentionedRoles = userMessage.mentions.roles;
 
         if (mentionedRoles.size === 0) {
-          throw new Error("No roles mentioned");
+          throw new InvalidCommandError("🤷 No roles mentioned");
         }
 
-        const serverRepository = getCustomRepository(ServerRepository);
-        await serverRepository.addAdminRoles(userMessage.guild.id, mentionedRoles);
+        await addAdminRoles(userMessage.guild.id, mentionedRoles);
         return true;
     }
     return false;

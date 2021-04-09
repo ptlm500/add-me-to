@@ -3,11 +3,11 @@ import {
   reacts
 } from "../config.json";
 
-export default class DenyedRoleError extends BaseError {
+export default class DeniedRoleError extends BaseError {
   constructor(message: string) {
     super(message);
     this.message = message;
-    this.name = "DenyedRoleError";
+    this.name = "DeniedRoleError";
     this.emoji = reacts.notAllowed;
   }
 }
