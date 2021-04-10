@@ -1,7 +1,7 @@
 import { Message } from "discord.js";
-import { denyRoles } from "../services/serverManagementService";
-import Command from "../command-handler/Command";
-import InvalidCommandError from "../errors/InvalidCommandError";
+import { denyRoles } from "../../services/serverManagementService";
+import Command from "../../command-handler/Command";
+import InvalidCommandError from "../../errors/InvalidCommandError";
 
 export default class Deny extends Command {
   readonly name = "deny";

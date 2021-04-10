@@ -39,9 +39,5 @@ async function manageRoles(
 }
 
 function canManageRole(denyList: Role[], requestedRole: DiscordRole): boolean {
-  if (!denyList || denyList.length === 0) {
-    return false;
-  }
-
   return !denyList.find(role => role.discordId === requestedRole.id);
 }
