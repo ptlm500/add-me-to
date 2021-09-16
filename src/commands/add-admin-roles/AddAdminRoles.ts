@@ -11,12 +11,12 @@ export default class AddAdminRoles extends Command {
     if (userMessage.guild) {
       const mentionedRoles = userMessage.mentions.roles;
 
-        if (mentionedRoles.size === 0) {
-          throw new InvalidCommandError("🤷 No roles mentioned");
-        }
+      if (mentionedRoles.size === 0) {
+        throw new InvalidCommandError("🤷 No roles mentioned");
+      }
 
-        await addAdminRoles(userMessage.guild.id, mentionedRoles);
-        return true;
+      await addAdminRoles(userMessage.guild.id, mentionedRoles);
+      return true;
     }
     return false;
   }

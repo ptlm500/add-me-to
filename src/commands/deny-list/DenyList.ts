@@ -1,7 +1,7 @@
 import { Message } from "discord.js";
-import Command from "../command-handler/Command";
-import DenyListEmbed from "../embeds/DenyListEmbed";
-import { getDeniedRoles } from "../services/serverManagementService";
+import Command from "../../command-handler/Command";
+import DenyListEmbed from "../../embeds/DenyListEmbed";
+import { getDeniedRoles } from "../../services/serverManagementService";
 
 export default class DenyList extends Command {
   readonly name = "deny list";

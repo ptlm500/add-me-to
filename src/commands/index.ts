@@ -2,7 +2,7 @@ import AddAdminRoles from './add-admin-roles/AddAdminRoles';
 import AddRoles from './add-roles/AddRoles';
 import Allow from './allow/Allow';
 import Deny from './deny/Deny';
-import DenyList from './DenyList';
+import DenyList from './deny-list/DenyList';
 import RemoveAdminRoles from './remove-admin-roles/RemoveAdminRoles';
 import RemoveRoles from './remove-roles/RemoveRoles';
 import SettingsList from './SettingsList';

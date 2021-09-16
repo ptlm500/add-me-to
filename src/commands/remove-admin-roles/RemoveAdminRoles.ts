@@ -15,8 +15,8 @@ export default class AddAdminRoles extends Command {
         throw new InvalidCommandError("🤷 No roles mentioned");
       }
 
-        await removeAdminRoles(userMessage.guild.id, mentionedRoles);
-        return true;
+      await removeAdminRoles(userMessage.guild.id, mentionedRoles);
+      return true;
     }
     return false;
   }

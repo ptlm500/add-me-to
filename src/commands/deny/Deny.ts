@@ -11,12 +11,12 @@ export default class Deny extends Command {
     if (userMessage.guild) {
       const mentionedRoles = userMessage.mentions.roles;
 
-        if (mentionedRoles.size === 0) {
-          throw new InvalidCommandError("🤷 No roles mentioned");
-        }
+      if (mentionedRoles.size === 0) {
+        throw new InvalidCommandError("🤷 No roles mentioned");
+      }
 
-        denyRoles(userMessage.guild.id, mentionedRoles);
-        return true;
+      denyRoles(userMessage.guild.id, mentionedRoles);
+      return true;
     }
     return false;
   }
