@@ -1,7 +1,7 @@
 import { Message } from "discord.js";
-import { allowRoles } from "../services/serverManagementService";
-import Command from "../command-handler/Command";
-import InvalidCommandError from '../errors/InvalidCommandError';
+import { allowRoles } from "../../services/serverManagementService";
+import Command from "../../command-handler/Command";
+import InvalidCommandError from '../../errors/InvalidCommandError';
 
 export default class Allow extends Command {
   readonly name = "allow";

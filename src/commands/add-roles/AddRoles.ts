@@ -1,7 +1,7 @@
 import { Message } from "discord.js";
-import Command from "../command-handler/Command";
-import { addRoles } from "../controllers/roleManagementController";
-import InvalidCommandError from "../errors/InvalidCommandError";
+import Command from "../../command-handler/Command";
+import { addRoles } from "../../controllers/roleManagementController";
+import InvalidCommandError from "../../errors/InvalidCommandError";
 
 export default class AddRoles extends Command {
   readonly name = "add me to";

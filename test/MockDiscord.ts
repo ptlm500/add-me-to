@@ -7,6 +7,8 @@ import {
   User,
   GuildMember,
   Message,
+  Collection,
+  Role,
 } from "discord.js";
 
 export default class MockDiscord {
@@ -86,6 +88,11 @@ export default class MockDiscord {
       },
     channel ? channel : this.textChannel
     );
+  }
+
+  public createRoleCollection(rolesToCreate: Record<string, any>[]): Collection<string, Role> {
+    const roles = rolesToCreate.map(roleToCreate => <[string, Role]>[roleToCreate[0], new Role(this.client, roleToCreate[1], this.guild)])
+    return new Collection(roles);
   }
 
   private mockClient(): void {

@@ -1,7 +1,7 @@
 import { Message } from "discord.js";
-import Command from "../command-handler/Command";
-import { removeRoles } from "../controllers/roleManagementController";
-import InvalidCommandError from "../errors/InvalidCommandError";
+import Command from "../../command-handler/Command";
+import { removeRoles } from "../../controllers/roleManagementController";
+import InvalidCommandError from "../../errors/InvalidCommandError";
 
 export default class RemoveRoles extends Command {
   readonly name = "remove";
