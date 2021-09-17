@@ -14,7 +14,7 @@ export default class SettingsList extends Command {
       if (adminRoles) {
         const settingsEmbed = new SettingsEmbed(adminRoles);
 
-        await userMessage.channel.send(settingsEmbed);
+        await userMessage.channel.send({ embeds: [settingsEmbed] });
       }
       return true;
     }

@@ -35,9 +35,10 @@ export default class Command implements ICommand {
         serverId: userMessage.guild?.id,
       },
       name: error.name,
+      stackTrace: error.stack,
       userMessage
     });
-    userMessage.react(error.emoji);
+    userMessage.react(error.emoji || reacts.error);
   }
 
   async run(userMessage: Message): Promise<void> {

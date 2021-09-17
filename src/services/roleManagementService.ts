@@ -6,8 +6,8 @@ export function addRoleToMember(member: GuildMember, role: DiscordRole): Promise
     meta: {
       serverId: member.guild.id,
     },
-    role,
-    user: member
+    role: role.id,
+    user: member.id
   });
   return member.roles.add(role);
 }
@@ -17,8 +17,8 @@ export function removeRoleFromMember(member: GuildMember, role: DiscordRole): Pr
     meta: {
       serverId: member.guild.id,
     },
-    role,
-    user: member
+    role: role.id,
+    user: member.id
   });
   return member.roles.remove(role);
 }

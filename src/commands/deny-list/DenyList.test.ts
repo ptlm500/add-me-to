@@ -1,12 +1,10 @@
 import * as commandAssertions from '../../../test/commandAssertions';
-import MockDiscord from '../../../test/MockDiscord';
 import DenyList from './DenyList';
 
 jest.mock("../../services/serverManagementService");
 
 let command: DenyList;
 
-const discord = new MockDiscord();
 
 beforeEach(() => {
   command = new DenyList();
@@ -27,6 +25,5 @@ describe('DenyList', () => {
 });
 
 afterAll(() => {
-  discord.cleanup();
   jest.restoreAllMocks();
 });
