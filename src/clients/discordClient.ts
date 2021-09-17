@@ -1,4 +1,4 @@
-import Discord, { Guild, Message, Role } from "discord.js";
+import Discord, { Guild, Intents, Message, Role } from "discord.js";
 import logger from '../logger/logger';
 import { createServer, deleteServer, updateServerName, deleteRole } from "../services/serverManagementService";
 import CommandHandler from "../command-handler/CommandHandler";
@@ -6,7 +6,7 @@ import commands, { addRoles } from '../commands';
 
 const commandHandler = new CommandHandler(commands, addRoles);
 
-const client = new Discord.Client();
+const client = new Discord.Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGE_REACTIONS] });
 
 client.on("ready", () => {
   if (client.user) {

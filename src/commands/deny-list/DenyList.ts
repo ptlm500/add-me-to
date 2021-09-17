@@ -14,7 +14,7 @@ export default class DenyList extends Command {
       if (deniedRoles) {
         const denyListEmbed = new DenyListEmbed(deniedRoles);
 
-        await userMessage.channel.send(denyListEmbed);
+        await userMessage.channel.send({ embeds: [denyListEmbed] });
       }
       return true;
     }
