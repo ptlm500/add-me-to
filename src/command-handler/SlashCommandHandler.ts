@@ -20,24 +20,20 @@ export default class SlashCommandHandler {
     }
 
     try {
+      let route: string;
       if (PROD) {
         logger.notice('⌛ Registering global slash commands');
-        await rest.put(
-          Routes.applicationCommands(process.env.APP_ID),
-          { body },
-        );
+        route = Routes.applicationCommands(process.env.APP_ID);
       } else {
         if (!process.env.GUILD_ID) {
           const message = '❗ GUILD_ID not set';
           throw new Error(message);
         }
-
+        route = Routes.applicationGuildCommands(process.env.APP_ID, process.env.GUILD_ID);
         logger.notice(`⌛ Registering slash commands on guild ${process.env.GUILD_ID}`);
-        await rest.put(
-          Routes.applicationGuildCommands(process.env.APP_ID, process.env.GUILD_ID),
-          { body }
-        )
+
       }
+      await rest.put(route as `/${string}`, { body });
       logger.notice('✅ Slash commands registered');
     } catch (e) {
       logger.error('❗ Unable to register slash commands', e);
