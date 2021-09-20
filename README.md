@@ -34,6 +34,8 @@ DB_PORT=<your PostgreSQL server port>
 DB_NAME=addmeto
 DB_USERNAME=<your PostgreSQL username>
 DB_PASSWORD=<your PostgreSQL password>
+APP_ID=<the application id of the bot>
+GUILD_ID=<the server id you are testing the bot on>
 ```
 
 ## Configuring optional environment variables

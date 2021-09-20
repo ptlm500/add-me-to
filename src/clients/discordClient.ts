@@ -3,17 +3,22 @@ import logger from '../logger/logger';
 import { createServer, deleteServer, updateServerName, deleteRole } from "../services/serverManagementService";
 import CommandHandler from "../command-handler/CommandHandler";
 import commands, { addRoles } from '../commands';
+import slashCommands from "../slash-commands";
+import SlashCommandHandler from "../command-handler/SlashCommandHandler";
 
 const commandHandler = new CommandHandler(commands, addRoles);
+const slashCommandHandler = new SlashCommandHandler(slashCommands);
 
 const client = new Discord.Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGE_REACTIONS] });
 
-client.on("ready", () => {
+client.on("ready", async () => {
   if (client.user) {
     logger.notice(`🚀 Logged in as ${client.user.tag}`);
   } else {
     logger.warning('🚀 Logged in as unknown user', { client });
   }
+
+  await slashCommandHandler.registerCommands();
   logger.notice(`🌍 Online and serving ${client.guilds.cache.size} servers`);
   client.user?.setActivity('@add me to @role');
 });
@@ -93,6 +98,12 @@ client.on("message", async (userMessage: Message) => {
       command
     });
     commandHandler.onMessage(command, userMessage);
+  }
+});
+
+client.on('interactionCreate', interaction => {
+  if (interaction.isCommand()) {
+    slashCommandHandler.onInteract(interaction);
   }
 });
 
