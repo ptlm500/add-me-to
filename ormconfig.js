@@ -10,5 +10,11 @@ module.exports = {
   // password: process.env.DB_PASSWORD,
   entities: [ Role, AdminRole, Server ],
   synchronize: true,
-  logging: true
+  logging: true,
+  ssl: true,
+  extra: {
+    ssl: {
+      rejectUnauthorized: false
+    }
+  }
 };
