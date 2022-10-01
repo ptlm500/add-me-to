@@ -1,16 +1,17 @@
 FROM node:14
 
-WORKDIR /usr/src/app
+WORKDIR /usr/app
 
 # Only copy the package.json file to work directory
 COPY package.json .
 # Install all Packages
-RUN npm install
+RUN npm install -g typescript
+RUN npm install --production
 
 # Copy all other source code to work directory
-ADD . /usr/src/app
+COPY . .
 # Compile
 RUN npm run build
 
 # Start
-CMD [ "npm", "start" ]
+CMD [ "node", "./dist/index.js" ]
