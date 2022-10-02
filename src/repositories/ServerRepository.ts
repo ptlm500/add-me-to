@@ -8,10 +8,9 @@ import { Server, Role, AdminRole } from '../entities';
 
 @EntityRepository(Server)
 export default class ServerRepository extends AbstractRepository<Server> {
-  async getServerById(serverId: string, relations?: string[]): Promise<Server> {
+  async getServerById(serverId: string, relations?: [string]): Promise<Server> {
     const server = await this.repository.findOne(
-      { discordId: serverId },
-      { relations }
+      { where: { discordId: serverId }, relations }
     );
 
     if (!server) {
