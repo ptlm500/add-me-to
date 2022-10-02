@@ -6,7 +6,7 @@ WORKDIR /usr/app
 COPY package.json .
 # Install all Packages
 RUN npm install -g typescript
-RUN npm install --production
+RUN npm install --omit=dev
 
 # Copy all other source code to work directory
 COPY . .
