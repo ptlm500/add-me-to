@@ -17,7 +17,7 @@ export default class Remove extends SlashCommand {
         .setRequired(true));
 
   async onInteract(interaction: CommandInteraction): Promise<string> {
-    const roleOption = interaction.options.getRole(ROLE_OPTION);
+    const roleOption = interaction.options.get(ROLE_OPTION)?.role;
 
     if (!interaction.member) {
       throw new InvalidCommandError("🤷 Interact has no associated member");

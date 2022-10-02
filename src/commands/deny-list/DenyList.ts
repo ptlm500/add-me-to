@@ -1,6 +1,6 @@
 import { Message } from "discord.js";
 import Command from "../../command-handler/Command";
-import DenyListEmbed from "../../embeds/DenyListEmbed";
+import generateDenyListEmbed from "../../embeds/DenyListEmbed";
 import { getDeniedRoles } from "../../services/serverManagementService";
 
 export default class DenyList extends Command {
@@ -12,9 +12,7 @@ export default class DenyList extends Command {
       const deniedRoles = await getDeniedRoles(userMessage.guild.id);
 
       if (deniedRoles) {
-        const denyListEmbed = new DenyListEmbed(deniedRoles);
-
-        await userMessage.channel.send({ embeds: [denyListEmbed] });
+        await userMessage.channel.send({ embeds: [generateDenyListEmbed(deniedRoles)] });
       }
       return true;
     }

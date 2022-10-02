@@ -1,11 +1,11 @@
-import { Collection, GuildMember, PermissionString, Role as DiscordRole } from "discord.js";
+import { Collection, GuildMember, PermissionsString, Role as DiscordRole } from "discord.js";
 import { AdminRole } from '../entities';
 import { getAdminRoles} from "../services/serverManagementService";
 
 export default class User {
-  readonly permissions: PermissionString[];
+  readonly permissions: PermissionsString[];
   readonly roles: Collection<string, DiscordRole>;
-  constructor(permissions: PermissionString[], roles: Collection<string, DiscordRole>) {
+  constructor(permissions: PermissionsString[], roles: Collection<string, DiscordRole>) {
     this.permissions = permissions;
     this.roles = roles;
   }
@@ -15,7 +15,7 @@ export default class User {
   }
 
   canAdministerServer(): boolean {
-    return this.permissions.includes("ADMINISTRATOR");
+    return this.permissions.includes("Administrator");
   }
 
   async canAdministerRoles(serverId: string): Promise<boolean> {

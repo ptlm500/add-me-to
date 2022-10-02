@@ -1,4 +1,4 @@
-import Discord, { Guild, Intents, Message, Role } from "discord.js";
+import Discord, { Guild, GatewayIntentBits, Message, Role } from "discord.js";
 import logger from '../logger/logger';
 import { createServer, deleteServer, updateServerName, deleteRole } from "../services/serverManagementService";
 import CommandHandler from "../command-handler/CommandHandler";
@@ -9,7 +9,7 @@ import SlashCommandHandler from "../command-handler/SlashCommandHandler";
 const commandHandler = new CommandHandler(commands, addRoles);
 const slashCommandHandler = new SlashCommandHandler(slashCommands);
 
-const client = new Discord.Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGE_REACTIONS] });
+const client = new Discord.Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.GuildMessageReactions] });
 
 client.on("ready", async () => {
   if (client.user) {

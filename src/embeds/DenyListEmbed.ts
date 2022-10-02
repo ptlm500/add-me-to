@@ -1,21 +1,18 @@
-import { EmbedFieldData, MessageEmbedOptions } from "discord.js";
+
+import { APIEmbedField } from "discord.js";
 import { Role } from "../entities";
 import AddMeToEmbed from "./AddMeToEmbed";
 import { generateRoleList } from './utils';
 
-export default class DenyListEmbed extends AddMeToEmbed {
-  constructor(deniedRoles: Role[]) {
-    const options : MessageEmbedOptions = {
-      color: 0x0099ff,
-      title: '👮 Denied roles',
-      fields: [generateDeniedRolesField(deniedRoles)]
-    }
 
-    super(options);
-  }
-}
+const generateDenyListEmbed = (deniedRoles: Role[]) => AddMeToEmbed
+  .setColor(0x0099ff)
+  .setTitle('👮 Denied roles')
+  .addFields([generateDeniedRolesField(deniedRoles)]);
 
-function generateDeniedRolesField(deniedRoles: Role[]): EmbedFieldData {
+export default generateDenyListEmbed;
+
+const generateDeniedRolesField = (deniedRoles: Role[]) : APIEmbedField  => {
   const noRolesText = 'ℹ️ No denied roles set. Add one or more with "deny @<role>".';
   let fieldText = '_You can\'t @add me to these roles_\n\n';
 
