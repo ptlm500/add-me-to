@@ -1,12 +1,9 @@
-import Discord, { Guild, GatewayIntentBits, Message, Role } from "discord.js";
+import Discord, { Guild, GatewayIntentBits, Role } from "discord.js";
 import logger from '../logger/logger';
 import { createServer, deleteServer, updateServerName, deleteRole } from "../services/serverManagementService";
-import CommandHandler from "../command-handler/CommandHandler";
-import commands, { addRoles } from '../commands';
 import slashCommands from "../slash-commands";
 import SlashCommandHandler from "../command-handler/SlashCommandHandler";
 
-const commandHandler = new CommandHandler(commands, addRoles);
 const slashCommandHandler = new SlashCommandHandler(slashCommands);
 
 const client = new Discord.Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.GuildMessageReactions] });
@@ -83,48 +80,11 @@ client.on("roleDelete", async (deletedRole: Role) => {
   });
 });
 
-client.on("message", async (userMessage: Message) => {
-  if (userMessage.author.bot) {
-    return;
-  }
-  if (client.user && userMessage.mentions.has(client.user.id) && !userMessage.mentions.everyone) {
-    const command = commandParser(userMessage);
-
-    logger.info('⏳ Processing command', {
-      meta: {
-        serverId: userMessage.guild?.id,
-      },
-      user: userMessage.author,
-      command
-    });
-    commandHandler.onMessage(command, userMessage);
-  }
-});
-
 client.on('interactionCreate', interaction => {
   if (interaction.isChatInputCommand()) {
     slashCommandHandler.onInteract(interaction);
   }
 });
-
-function commandParser(userMessage: Message): string {
-  return userMessage.content.split(' ')
-  .filter(commandPart => !userMessage.mentions.has(getIdFromMention(commandPart)))
-  .join(' ');
-}
-
-function getIdFromMention(mention: string): string {
-  if (!mention) return '';
-
-  if (mention.startsWith('<@') && mention.endsWith('>')) {
-    mention = mention.slice(2, -1);
-
-    if (mention.startsWith('!') || mention.startsWith('&')) {
-      mention = mention.slice(1);
-    }
-  }
-  return mention;
-}
 
 client.on("error", error => {
   logger.error(error);
