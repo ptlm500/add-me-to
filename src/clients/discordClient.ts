@@ -102,7 +102,7 @@ client.on("message", async (userMessage: Message) => {
 });
 
 client.on('interactionCreate', interaction => {
-  if (interaction.isCommand()) {
+  if (interaction.isChatInputCommand()) {
     slashCommandHandler.onInteract(interaction);
   }
 });

@@ -7,12 +7,12 @@ export function getAdminRoles(serverId: string): Promise<AdminRole[]|null> {
   return getServerRepository().getAdminRolesByServer(serverId);
 }
 
-export function addAdminRoles(serverId: string, roles: Collection<string, DiscordRole>): Promise<Server> {
+export function addAdminRoles(serverId: string, roles: Collection<string, DiscordRole>): Promise<AdminRole[]> {
   const roleIds = roles.map(getRoleId);
   return getServerRepository().addAdminRoles(serverId, roleIds);
 }
 
-export function removeAdminRoles(serverId: string, roles: Collection<string, DiscordRole>): Promise<Server> {
+export function removeAdminRoles(serverId: string, roles: Collection<string, DiscordRole>): Promise<AdminRole[]> {
   const roleIds = roles.map(getRoleId);
   return getServerRepository().removeAdminRoles(serverId, roleIds);
 }

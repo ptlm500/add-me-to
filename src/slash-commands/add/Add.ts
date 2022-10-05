@@ -1,6 +1,6 @@
 import { Collection, CommandInteraction } from "discord.js";
 import { SlashCommandBuilder } from "@discordjs/builders";
-import SlashCommand from "../../command-handler/SlashCommand";
+import SlashCommand, { InteractionResponse } from "../../command-handler/SlashCommand";
 import { addRoles } from "../../controllers/roleManagementController";
 import InvalidCommandError from "../../errors/InvalidCommandError";
 import BaseError from "../../errors/BaseError";
@@ -16,7 +16,7 @@ export default class Add extends SlashCommand {
         .setDescription('The role to be added to')
         .setRequired(true));
 
-  async onInteract(interaction: CommandInteraction): Promise<string> {
+  async onInteract(interaction: CommandInteraction): Promise<InteractionResponse> {
     const roleOption = interaction.options.get(ROLE_OPTION)?.role;
 
     if (!interaction.member) {
@@ -37,7 +37,7 @@ export default class Add extends SlashCommand {
     }
 
     await addRoles(member, new Collection([[guildRole.name, guildRole]]));
-    return `✅ added <@${member.id}> to <@&${guildRole.id}>`;
+    return { content: `✅ added <@${member.id}> to <@&${guildRole.id}>` };
   }
 
   onError(error: BaseError, interaction: CommandInteraction) : void {
