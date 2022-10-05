@@ -40,24 +40,27 @@ export default class ServerRepository extends AbstractRepository<Server> {
     return server;
   }
 
-  async addAdminRoles(serverId: string, roleIds: string[]): Promise<Server> {
+  async addAdminRoles(serverId: string, roleIds: string[]): Promise<AdminRole[]> {
     const server = await this.getServerById(serverId);
 
+    const adminRoles: AdminRole[] = [];
     roleIds.forEach(async roleId => {
-        await AdminRole.create({ discordId: `${roleId}`, serverId: server.id }).save();
+      const role = AdminRole.create({ discordId: `${roleId}`, serverId: server.id });
+      await role.save();
+      adminRoles.push(role);
     });
 
-    return server;
+    return adminRoles;
   }
 
-  async removeAdminRoles(serverId: string, roleIds: string[]): Promise<Server> {
+  async removeAdminRoles(serverId: string, roleIds: string[]): Promise<AdminRole[]> {
     const server = await this.getServerById(serverId);
 
     roleIds.forEach(async roleId => {
         await AdminRole.delete({ discordId: `${roleId}`, serverId: server.id });
     });
 
-    return server;
+    return server.adminRoles;
   }
 
   async getDeniedRolesByServer(serverId: string): Promise<Role[]> {

@@ -1,19 +1,20 @@
-import { Collection, CommandInteraction } from "discord.js";
 import { SlashCommandBuilder } from "@discordjs/builders";
+import { CommandInteraction, Collection } from "discord.js";
+import { denyRoles } from "../../services/serverManagementService";
 import SlashCommand, { InteractionResponse } from "../../command-handler/SlashCommand";
-import { removeRoles } from "../../controllers/roleManagementController";
 import InvalidCommandError from "../../errors/InvalidCommandError";
 import BaseError from "../../errors/BaseError";
-import DeniedRoleError from "../../errors/DeniedRoleError";
 
 const ROLE_OPTION = 'role';
-export default class Remove extends SlashCommand {
+export default class Deny extends SlashCommand {
+  ephemeral = true;
+  requiresAdmin = true;
   readonly slashCommandBuilder = new SlashCommandBuilder()
-    .setName('remove')
-    .setDescription('Removes you from a role')
+    .setName('deny')
+    .setDescription('Prevent users from adding themselves to a role')
     .addRoleOption(option =>
       option.setName(ROLE_OPTION)
-        .setDescription('The role to be removed from')
+        .setDescription('The role to prevent users from adding to themselves')
         .setRequired(true));
 
   async onInteract(interaction: CommandInteraction): Promise<InteractionResponse> {
@@ -36,15 +37,8 @@ export default class Remove extends SlashCommand {
       throw new BaseError(`🤷 couldn't get role ${roleOption.id}`);
     }
 
-    await removeRoles(member, new Collection([[guildRole.name, guildRole]]));
-    return { content: `✅ removed <@${member.id}> from <@&${guildRole.id}>` };
-  }
+    await denyRoles(interaction.guildId!, new Collection([[guildRole.name, guildRole]]));
 
-  onError(error: BaseError, interaction: CommandInteraction) : void {
-    if (error instanceof DeniedRoleError ) {
-      interaction.reply('👮 That role is on the deny list!');
-      return;
-    }
-    return super.onError(error, interaction);
+    return { content: '✅' };
   }
 }

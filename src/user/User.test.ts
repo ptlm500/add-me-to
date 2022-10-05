@@ -5,7 +5,7 @@ jest.mock("../services/serverManagementService");
 
 describe('canAdministerServer', () => {
   it('returns true when permissions contains the administrator permission', () => {
-    const user = new User(["ADMINISTRATOR"], new Collection([]));
+    const user = new User(["Administrator"], new Collection([]));
 
     expect(user.canAdministerServer()).toBeTruthy();
   });
@@ -17,7 +17,7 @@ describe('canAdministerServer', () => {
   });
 
   it('returns false when permissions doesn\'t contain the adminstrator permission', () => {
-    const user = new User(["MANAGE_ROLES", "MANAGE_NICKNAMES"], new Collection([]));
+    const user = new User(["ManageRoles", "ManageNicknames"], new Collection([]));
 
     expect(user.canAdministerServer()).toBeFalsy();
   });

@@ -9,5 +9,6 @@ export default class UserPermissionsError extends BaseError {
     this.message = message;
     this.name = "UserPermissionsError";
     this.emoji = reacts.notAllowed;
+    this.displayMessage = "You're not allowed to do that.";
   }
 }
