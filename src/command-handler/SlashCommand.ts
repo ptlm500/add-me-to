@@ -46,16 +46,22 @@ export default class SlashCommand implements ISlashCommand {
   async interact(interaction: CommandInteraction): Promise<void> {
     if (interaction && interaction.guild && interaction.member) {
       try {
-        const user = User.fromGuildMember(interaction.member as GuildMember);
-        if (!this.requiresAdmin || await user.canAdministerRoles(interaction.guild.id)) {
-          const response = await this.onInteract(interaction);
+        await this.checkPermissions(interaction.guild.id, interaction.member as GuildMember);
+        const response = await this.onInteract(interaction);
 
-          response && this.onSuccess(interaction, response);
-        } else {
-          throw new UserPermissionsError(`🔒 ${interaction.user.username}:${interaction.guild.id} doesn't have permissions to ${interaction.commandName}.`);
-        }
+        response && this.onSuccess(interaction, response);
       } catch (e) {
         this.onError(e, interaction);
+      }
+    }
+  }
+
+  private async checkPermissions(serverId: string, member: GuildMember) {
+    if (this.requiresAdmin) {
+      const user = User.fromGuildMember(member);
+      const canAdminister = await user.canAdministerRoles(serverId);
+      if (!canAdminister) {
+        throw new UserPermissionsError(`🔒 ${member.user.username}:${serverId} doesn't have permissions.`);
       }
     }
   }
