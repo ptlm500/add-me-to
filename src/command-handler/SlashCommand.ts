@@ -4,12 +4,14 @@ import BaseError from "../errors/BaseError";
 import logger from "../logger/logger";
 import User from "../user/User";
 import UserPermissionsError from "../errors/UserPermissionsError";
+import { buildInteraction, Interaction } from "./interaction/interaction";
 
 export type InteractionResponse = Pick<BaseMessageOptions, "content" | "components" | "embeds">;
+
 interface ISlashCommand {
   readonly slashCommandBuilder: Omit<SlashCommandBuilder, "addSubcommand" | "addSubcommandGroup">;
-  onInteract(interaction: CommandInteraction): Promise<InteractionResponse>
-  onSuccess(interaction: CommandInteraction, response: InteractionResponse): void;
+  onInteract(interaction: Interaction): Promise<InteractionResponse>
+  onSuccess(interaction: Interaction, response: InteractionResponse): void;
   onError(error: BaseError|Error, interaction: CommandInteraction): void;
   canExecute(interaction: CommandInteraction): boolean;
 }
@@ -19,40 +21,39 @@ export default class SlashCommand implements ISlashCommand {
   readonly ephemeral: boolean;
   readonly requiresAdmin: boolean;
 
-  onInteract(_interaction: CommandInteraction): Promise<InteractionResponse> {
+  onInteract(_interaction: Interaction): Promise<InteractionResponse> {
     throw new Error("No onInteract method defined");
   }
 
-  onSuccess(interaction: CommandInteraction, response: InteractionResponse): void {
-    interaction.reply({ ...response, ephemeral: this.ephemeral });
+  onSuccess(interaction: Interaction, response: InteractionResponse): void {
+    interaction.command.reply({ ...response, ephemeral: this.ephemeral });
   }
 
   canExecute(interaction: CommandInteraction): boolean {
     return this.slashCommandBuilder.name === interaction.commandName;
   }
 
-  onError(error: BaseError, interaction: CommandInteraction): void {
+  onError(error: BaseError, command: CommandInteraction): void {
     logger.warning(error.message, {
       meta: {
-        serverId: interaction.guild?.id,
+        serverId: command.guild?.id,
       },
       name: error.name,
       stackTrace: error.stack,
-      interaction
+      command
     });
-    interaction.reply({ content: `${error.emoji} ${error.displayMessage}`, ephemeral: true });
+    command.reply({ content: `${error.emoji} ${error.displayMessage}`, ephemeral: true });
   }
 
-  async interact(interaction: CommandInteraction): Promise<void> {
-    if (interaction && interaction.guild && interaction.member) {
-      try {
-        await this.checkPermissions(interaction.guild.id, interaction.member as GuildMember);
-        const response = await this.onInteract(interaction);
+  async interact(command: CommandInteraction): Promise<void> {
+    try {
+      const interaction = await buildInteraction(command);
+      await this.checkPermissions(interaction.guild.id, interaction.command.member as GuildMember);
+      const response = await this.onInteract(interaction);
 
-        response && this.onSuccess(interaction, response);
-      } catch (e) {
-        this.onError(e, interaction);
-      }
+      response && this.onSuccess(interaction, response);
+    } catch (e) {
+      this.onError(e, command);
     }
   }
 
