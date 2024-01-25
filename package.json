@@ -16,7 +16,7 @@
   "author": "Peter Mills",
   "license": "MIT",
   "engines": {
-    "node": "16.17.x"
+    "node": "20.11.x"
   },
   "dependencies": {
     "@discordjs/builders": "^0.16.0",
